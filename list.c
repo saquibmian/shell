@@ -1,15 +1,5 @@
-/********************************************************************************
- * list.c
- * 
- * Computer Science 3357a
- * Assignment 1
- *
- * Author: Saquib Mian
- * 
- * Implementation file containing an array-based List implementation. Implements list.h
-*******************************************************************************/
-
 #include "list.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <syslog.h>
