@@ -13,40 +13,39 @@ int main()
 	init_history();
 
 	while ( true ) {
+		// Show the prompt
 		prompt();
  
-		/* Read a command line */
-		if ( !fgets( line, sizeof( line ) / sizeof( char ), stdin ) ) return -1;
+		// Read a command
+		fgets( line, sizeof( line ) / sizeof( char ), stdin );
 		char* history_item = create_history_item( line );
 		
-		int input = 0;
-		bool isFirstCommand = true;
- 
-		char* cmd = line;
-		char* next_pipe_delimiter = strchr( cmd, '|' ); /* Find first '|' */
- 
 		// Split by | and run each command individually
+		int input_stream = 0;
+		bool isFirstCommand = true; 
+		char* cmd = line;
+		char* next_pipe_delimiter = strchr( cmd, '|' );
 		while ( next_pipe_delimiter != NULL ) {
-			/* 'next_pipe_delimiter' points to '|' */
-			*next_pipe_delimiter = '\0';
+			*next_pipe_delimiter = '\0'; // used to point to '|'
 			struct command_t command = {
 				.command = cmd,
 				.isFirstCommand = isFirstCommand,
 				.isLastCommand = false
 			};
-			input = run( &command, input );
+			input_stream = run( &command, input_stream );
  
 			cmd = next_pipe_delimiter + 1;
-			next_pipe_delimiter = strchr( cmd, '|' ); /* Find next '|' */
+			next_pipe_delimiter = strchr( cmd, '|' );
 			isFirstCommand = false;
 		}
+
 		// Run the last command
 		struct command_t command = {
 			.command = cmd,
 			.isFirstCommand = isFirstCommand,
 			.isLastCommand = true
 		};
-		input = run( &command, input );
+		input_stream = run( &command, input_stream );
 
 		add_history_item( history_item );
 	}
