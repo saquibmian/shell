@@ -61,9 +61,6 @@ static int execute_command( char* commands, char** args )
  */
 static int run_command( struct command_t* command, int input )
 {
-	if( command->redirect_out != NULL ) printf("Would redirect to: %s\n", command->redirect_out );
-	if( command->redirect_in != NULL ) printf("Would redirect fom: %s\n", command->redirect_in );
-
 	/* Invoke pipe */
 	int pipettes[2];
 	pipe( pipettes );	
@@ -76,19 +73,49 @@ static int run_command( struct command_t* command, int input )
  
 	if ( pid == 0 ) // if child process
 	{
+		FILE* file_in;
+		FILE* file_out;
+
 		if( command->isFirstCommand == true && command->isLastCommand == false && input == 0 ) {
 			// First command
 			dup2( pipettes[WRITE], STDOUT_FILENO );
-		} else if( command->isFirstCommand == false && command->isLastCommand == false && input != 0 ) {
+		} 
+		else if( command->isFirstCommand == false && command->isLastCommand == false && input != 0 ) 
+		{
 			// Middle command
 			dup2( input, STDIN_FILENO );
 			dup2( pipettes[WRITE], STDOUT_FILENO );
-		} else {
+		} 
+		else 
+		{
 			// Last command
 			dup2( input, STDIN_FILENO );
 		}
+
+		// '<' overwrides all pipes
+		if( command->redirect_in )
+		{
+			file_in = fopen( command->redirect_in, "r" );
+			dup2( fileno( file_in ), STDIN_FILENO );
+		}
+		if( command ->redirect_out )
+		{
+			file_out = fopen( command->redirect_out, "w+" );
+			dup2( fileno( file_out ), STDOUT_FILENO );
+		}
+
+		int result = execvp( command->args[0], command->args );
+
+		if( command->redirect_in )
+		{
+			fclose( file_in );
+		}
+		if( command ->redirect_out )
+		{
+			fclose( file_out );
+		}
  
-		if( execvp( command->args[0], command->args ) == -1 ) {
+		if( result == -1 ) {
 			_exit( EXIT_FAILURE ); // If child fails
 		}
 	}
@@ -215,6 +242,7 @@ static void parse_command( struct command_t* command )
 			command->args[i] = cmd;			
 			++i;
 		}
+
 		// replace newline character with string terminator
 		next = strchr( cmd, '\n' );
 		next[0] = '\0';
