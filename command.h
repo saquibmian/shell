@@ -3,6 +3,7 @@
 
 #include "bool.h"
 
+// Simple structure to hold the command information
 struct command_t 
 {
 	char* command;
@@ -13,6 +14,7 @@ struct command_t
 	bool isLastCommand;
 };
 
+// Execute a command; this method takes care of the forking and creation of pipes
 int run( struct command_t* command, int input );
 
 #endif

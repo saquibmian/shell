@@ -40,7 +40,7 @@ void print_history( int count )
     for( ; i < history->size; ++i )
     {
         char* line  = (char*) list_at( history, i );
-        printf( "%s", line );
+        printf( "%4d %s", i+1, line );
     }
 }
 

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <syslog.h>
 
-void expand_capacity( List* list );
+static void expand_capacity( List* list );
 
 void list_init( List** list, int initial_capacity, size_t size_of_element )
 {
@@ -48,7 +48,7 @@ const void* list_at( List* list, int index )
 }
 
 // doubles the capacity of the allocated memory
-void expand_capacity( List* list )
+static void expand_capacity( List* list )
 {
     size_t new_size = sizeof( list->elements ) * list->capacity * 2;
     list->elements = realloc( list->elements, new_size );
@@ -63,7 +63,8 @@ void list_free( List** list )
 
 void list_free_elements( List* list )
 {
-    for( int i = 0; i < list->size; ++i )
+    int i;
+    for( i = 0; i < list->size; ++i )
     {
         void* element  = (void*) list_at( list, i );
         free( element );

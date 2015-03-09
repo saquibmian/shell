@@ -1,14 +1,3 @@
-/********************************************************************************
- * list.h
- * 
- * Computer Science 3357a
- * Assignment 1
- *
- * Author: Saquib Mian
- * 
- * Header file containing an List interface.
-*******************************************************************************/
-
 #ifndef list_h
 #define list_h
 
